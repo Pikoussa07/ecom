@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EcomEmballage - Emballage E-commerce au Maroc</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    /* THEME VARIABLES */
+    :root {
+      --orange: #f97316; --orange-light: #fed7aa; 
+      --black: #111111; --dark: #1c1c1c; 
+      --gray: #6b7280; --light-gray: #f5f5f5;
+      --white: #ffffff; --border: #e5e7eb;
+      --nav-bg: rgba(255,255,255,0.9);
+      --modal-bg: rgba(0,0,0,0.6);
+    }
+    
+    [data-theme="dark"] {
+      --black: #ffffff; --dark: #f3f4f6; 
+      --gray: #9ca3af; --light-gray: #1f2937;
+      --white: #111827; --border: #374151;
+      --nav-bg: rgba(17,24,39,0.9);
+      --modal-bg: rgba(0,0,0,0.8);
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; color: var(--black); background: var(--white); overflow-x: hidden; transition: background 0.3s, color 0.3s; }
+    h1, h2, h3, h4 { font-family: 'Space Grotesk', sans-serif; }
+
+    /* NAVBAR */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      padding: 0 2rem; height: 70px;
+      display: flex; align-items: center; justify-content: space-between;
+      transition: all 0.4s ease;
+    }
+    nav.scrolled {
+      background: var(--nav-bg); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border); box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+    }
+    .nav-logo { color: var(--white); display: flex; align-items: center; gap: 10px; text-decoration: none; cursor: pointer; }
+    .nav-logo-icon {
+      width: 38px; height: 38px; background: var(--orange); border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; transition: transform 0.3s;
+    }
+    .nav-logo:hover .nav-logo-icon { transform: scale(1.1); }
+    .nav-logo-icon svg { width: 20px; height: 20px; fill: #fff; }
+    .nav-logo-text { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.1rem; color: var(--black); }
+    nav:not(.scrolled) .nav-logo-text { color: #fff; }
+    .nav-logo-text .orange { color: var(--orange); }
+    .nav-links { display: flex; align-items: center; gap: 4px; }
+    .nav-links a {
+      padding: 8px 16px; font-size: 0.875rem; font-weight: 500;
+      color: var(--gray); text-decoration: none; border-radius: 8px; transition: all 0.2s;
+    }
+    nav:not(.scrolled) .nav-links a { color: rgba(255,255,255,0.8); }
+    .nav-links a:hover { color: var(--black); background: var(--light-gray); }
+    nav:not(.scrolled) .nav-links a:hover { color: #fff; background: rgba(255,255,255,0.1); }
+    
+    .nav-cta {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 22px; background: var(--orange); color: white !important;
+      font-size: 0.875rem; font-weight: 600; border-radius: 999px;
+      text-decoration: none; border: none; cursor: pointer;
+      transition: all 0.3s; box-shadow: 0 4px 15px rgba(249,115,22,0.3);
+    }
+    .nav-cta:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(249,115,22,0.6); }
+    .nav-cta svg { width: 16px; height: 16px; fill: white; flex-shrink: 0; }
+    
+    /* THEME TOGGLE */
+    .theme-toggle {
+      background: var(--light-gray); border: 1px solid var(--border);
+      color: var(--black); width: 38px; height: 38px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all 0.3s; margin-right: 15px; font-size: 1.2rem;
+    }
+    .theme-toggle:hover { transform: scale(1.1) rotate(15deg); }
+    .nav-controls { display: flex; align-items: center; }
+
+    .hamburger {
+      display: none; flex-direction: column; gap: 5px;
+      cursor: pointer; padding: 6px; border: none; background: none;
+    }
+    .hamburger span { display: block; width: 24px; height: 2px; background: var(--black); border-radius: 2px; transition: all 0.3s; }
+    nav:not(.scrolled) .hamburger span { background: #fff; }
+    
+    .mobile-menu {
+      display: none; position: fixed; top: 70px; left: 0; right: 0;
+      background: var(--nav-bg); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border); padding: 1rem 2rem 1.5rem;
+      z-index: 999; flex-direction: column; gap: 4px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      padding: 12px 16px; font-size: 0.95rem; font-weight: 500;
+      color: var(--black); text-decoration: none; border-radius: 10px; transition: background 0.2s;
+    }
+    .mobile-menu a:hover { background: var(--light-gray); }
+    .mobile-cta { margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px; background: var(--orange); color: white !important; font-weight: 600; border-radius: 12px; }
+
+    /* HERO */
+    #hero {
+      position: relative; min-height: 100vh;
+      display: flex; align-items: center; overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 50%, #2a1a0a 100%);
+    }
+    .hero-bg::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(249,115,22,0.15) 0%, transparent 70%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(249,115,22,0.08) 0%, transparent 60%);
+    }
+    .hero-shape { position: absolute; border-radius: 50%; background: rgba(249,115,22,0.06); animation: floatShape 8s ease-in-out infinite; }
+    .hero-shape:nth-child(1) { width: 400px; height: 400px; top: -100px; right: -100px; }
+    .hero-shape:nth-child(2) { width: 200px; height: 200px; bottom: 100px; right: 200px; animation-delay: 2s; }
+    .hero-shape:nth-child(3) { width: 150px; height: 150px; top: 200px; left: 5%; animation-delay: 4s; background: rgba(249,115,22,0.04); }
+    @keyframes floatShape { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-20px) scale(1.05); } }
+    
+    .hero-content { position: relative; z-index: 2; padding: 8rem 2rem 4rem; margin-left: clamp(1rem, 8vw, 120px); max-width: 680px; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; background: rgba(249,115,22,0.15); border: 1px solid rgba(249,115,22,0.3); border-radius: 999px; color: var(--orange); font-size: 0.8rem; font-weight: 500; animation: fadeInUp 0.8s ease both; animation-delay: 0.2s; }
+    .hero-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--orange); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.3); } }
+    .hero-title { margin-top: 1.5rem; font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 800; color: white; line-height: 1.1; animation: fadeInUp 0.8s ease both; animation-delay: 0.4s; }
+    .hero-title .accent { color: var(--orange); }
+    .hero-desc { margin-top: 1.5rem; font-size: 1.1rem; color: rgba(255,255,255,0.65); line-height: 1.7; max-width: 480px; animation: fadeInUp 0.8s ease both; animation-delay: 0.6s; }
+    .hero-buttons { margin-top: 2.5rem; display: flex; gap: 1rem; flex-wrap: wrap; animation: fadeInUp 0.8s ease both; animation-delay: 0.8s; }
+    .btn-primary { display: inline-flex; align-items: center; gap: 10px; padding: 16px 32px; background: var(--orange); color: white; font-weight: 600; font-size: 1rem; border-radius: 999px; text-decoration: none; border: none; cursor: pointer; transition: all 0.4s; box-shadow: 0 8px 30px rgba(249,115,22,0.35); font-family: 'Inter', sans-serif; }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(249,115,22,0.6); }
+    .btn-primary svg { width: 20px; height: 20px; fill: white; flex-shrink: 0; }
+    .btn-secondary { display: inline-flex; align-items: center; gap: 8px; padding: 16px 32px; border: 1px solid rgba(255,255,255,0.2); color: white; font-weight: 500; font-size: 1rem; border-radius: 999px; text-decoration: none; cursor: pointer; background: transparent; backdrop-filter: blur(10px); transition: all 0.3s; font-family: 'Inter', sans-serif; }
+    .btn-secondary:hover { background: rgba(255,255,255,0.1); }
+    .hero-scroll { position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; z-index: 2; animation: fadeIn 1s ease both; animation-delay: 1.5s; }
+    .hero-scroll span { font-size: 0.7rem; color: rgba(255,255,255,0.35); letter-spacing: 0.15em; text-transform: uppercase; }
+    .scroll-arrow { width: 16px; height: 16px; border-right: 2px solid rgba(255,255,255,0.3); border-bottom: 2px solid rgba(255,255,255,0.3); transform: rotate(45deg); animation: scrollBounce 2s ease-in-out infinite; }
+    @keyframes scrollBounce { 0%, 100% { transform: rotate(45deg) translateY(0); } 50% { transform: rotate(45deg) translateY(6px); } }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    /* PRODUCTS */
+    #products { padding: 6rem 2rem; background: var(--white); }
+    .section-header { text-align: center; max-width: 580px; margin: 0 auto 4rem; }
+    .section-label { display: inline-block; font-size: 0.75rem; font-weight: 600; color: var(--orange); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.75rem; }
+    .section-title { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; color: var(--black); line-height: 1.15; }
+    .section-desc { margin-top: 1rem; font-size: 1.05rem; color: var(--gray); line-height: 1.7; }
+    .products-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.5rem; }
+    .product-card { background: var(--white); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; transition: all 0.4s ease; opacity: 0; transform: translateY(30px); }
+    .product-card.visible { opacity: 1; transform: translateY(0); }
+    .product-card:hover { transform: translateY(-6px); box-shadow: 0 20px 60px rgba(0,0,0,0.1); border-color: rgba(249,115,22,0.4); }
+    .product-img { aspect-ratio: 1; overflow: hidden; background: var(--light-gray); position: relative; }
+    .product-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease, opacity 0.3s ease; }
+    .product-card:hover .product-img img { transform: scale(1.06); }
+    .product-info { padding: 1.25rem; }
+    .product-name { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1rem; color: var(--black); }
+    .product-desc { margin-top: 0.4rem; font-size: 0.85rem; color: var(--gray); line-height: 1.5; }
+    .product-price { margin-top: 0.75rem; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1rem; color: var(--orange); }
+    .product-btn { margin-top: 1rem; display: flex; align-items: center; justify-content: center; gap: 7px; width: 100%; padding: 12px; background: var(--black); color: var(--white); font-size: 0.9rem; font-weight: 600; border-radius: 12px; text-decoration: none; border: none; cursor: pointer; transition: all 0.3s; font-family: 'Inter', sans-serif; }
+    [data-theme="dark"] .product-btn { background: var(--border); color: white; }
+    .product-btn:hover { background: var(--orange); box-shadow: 0 5px 15px rgba(249,115,22,0.4); }
+    .product-btn svg { width: 16px; height: 16px; fill: currentColor; flex-shrink: 0; }
+    .products-cta { text-align: center; margin-top: 3.5rem; }
+    .products-cta p { color: var(--gray); margin-bottom: 1rem; font-size: 0.95rem; }
+
+    /* ABOUT */
+    #about { padding: 6rem 2rem; background: var(--light-gray); }
+    .features-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+    .feature-card { background: var(--white); border: 1px solid var(--border); border-radius: 20px; padding: 2rem; transition: all 0.4s; opacity: 0; transform: translateY(25px); }
+    .feature-card.visible { opacity: 1; transform: translateY(0); }
+    .feature-card:hover { border-color: rgba(249,115,22,0.4); box-shadow: 0 12px 40px rgba(249,115,22,0.06); transform: translateY(-4px); }
+    .feature-icon { width: 56px; height: 56px; background: rgba(249,115,22,0.1); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; transition: background 0.3s; }
+    .feature-card:hover .feature-icon { background: rgba(249,115,22,0.18); }
+    .feature-icon svg { width: 28px; height: 28px; stroke: var(--orange); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .feature-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--black); }
+    .feature-desc { margin-top: 0.6rem; font-size: 0.9rem; color: var(--gray); line-height: 1.65; }
+
+    /* FOOTER */
+    footer { background: #0f0f0f; color: rgba(255,255,255,0.7); padding: 4rem 2rem 2rem; }
+    .footer-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 3rem; padding-bottom: 3rem; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .footer-brand .logo { display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; }
+    .footer-logo-icon { width: 36px; height: 36px; background: var(--orange); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+    .footer-logo-icon svg { width: 18px; height: 18px; fill: white; }
+    .footer-brand-name { font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: white; font-size: 1rem; }
+    .footer-tagline { font-size: 0.85rem; line-height: 1.65; color: rgba(255,255,255,0.45); }
+    .footer-col h4 { font-family: 'Space Grotesk', sans-serif; font-weight: 600; color: white; font-size: 0.95rem; margin-bottom: 1.2rem; }
+    .footer-links { display: flex; flex-direction: column; gap: 10px; }
+    .footer-links a { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; color: rgba(255,255,255,0.5); text-decoration: none; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--orange); }
+    .footer-links svg { width: 15px; height: 15px; flex-shrink: 0; }
+    .svg-stroke { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .svg-fill { fill: currentColor; }
+    .footer-nav { display: flex; flex-direction: column; gap: 8px; }
+    .footer-nav a { font-size: 0.85rem; color: rgba(255,255,255,0.5); text-decoration: none; padding: 4px 0; transition: color 0.2s; }
+    .footer-nav a:hover { color: var(--orange); }
+    .footer-bottom { max-width: 1200px; margin: 0 auto; padding-top: 2rem; text-align: center; }
+    .footer-bottom p { font-size: 0.8rem; color: rgba(255,255,255,0.3); }
+
+    /* FLOATS */
+    .wa-float {
+      position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 999;
+      width: 56px; height: 56px; background: #25d366; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      text-decoration: none; box-shadow: 0 6px 25px rgba(37,211,102,0.4);
+      transition: all 0.3s; animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both; animation-delay: 2s;
+    }
+    .wa-float::before { content: ''; position: absolute; inset: 0; border-radius: 50%; background: #25d366; animation: waPing 2s ease-out infinite; }
+    .wa-float:hover { transform: scale(1.12); box-shadow: 0 8px 35px rgba(37,211,102,0.5); }
+    .wa-float svg { width: 28px; height: 28px; fill: white; position: relative; z-index: 1; }
+
+    .cart-float {
+      position: fixed; bottom: 6rem; right: 1.5rem; z-index: 998;
+      width: 56px; height: 56px; background: var(--black); color: white; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
+      cursor: pointer; box-shadow: 0 6px 25px rgba(0,0,0,0.3); transition: all 0.3s;
+      animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both; animation-delay: 1.5s;
+    }
+    [data-theme="dark"] .cart-float { background: var(--border); }
+    .cart-float:hover { transform: scale(1.12); background: var(--orange); }
+    .cart-count {
+      position: absolute; top: -5px; right: -5px; background: var(--orange);
+      color: white; font-size: 0.75rem; font-weight: bold; width: 22px; height: 22px;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      border: 2px solid white; transition: all 0.2s;
+    }
+    [data-theme="dark"] .cart-count { border-color: #111827; }
+
+    @keyframes waPing { 0% { transform: scale(1); opacity: 0.4; } 100% { transform: scale(1.8); opacity: 0; } }
+    @keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+    /* MODALS */
+    .modal-overlay {
+      position: fixed; inset: 0; background: var(--modal-bg); backdrop-filter: blur(6px);
+      z-index: 10000; display: flex; align-items: center; justify-content: center;
+      opacity: 0; visibility: hidden; transition: all 0.3s ease-out; padding: 1rem;
+    }
+    .modal-overlay.active { opacity: 1; visibility: visible; }
+    
+    .modal-content {
+      background: var(--white); width: 100%; max-width: 400px; border-radius: 24px;
+      padding: 2rem; transform: scale(0.95) translateY(20px); opacity: 0; 
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0,0,0,0.05); 
+      position: relative; max-height: calc(100vh - 2rem); overflow-y: auto; 
+    }
+    .modal-overlay.active .modal-content { transform: scale(1) translateY(0); opacity: 1; }
+    .modal-content::-webkit-scrollbar { width: 6px; }
+    .modal-content::-webkit-scrollbar-track { background: transparent; }
+    .modal-content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+    [data-theme="dark"] .modal-content::-webkit-scrollbar-thumb { background: #4b5563; }
+    
+    .modal-close {
+      position: absolute; top: 1.2rem; right: 1.2rem; width: 36px; height: 36px;
+      background: var(--light-gray); border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; cursor: pointer; color: var(--gray); transition: all 0.2s ease;
+      font-size: 1.4rem; border: none; z-index: 10; line-height: 1; padding-bottom: 2px;
+    }
+    .modal-close:hover { background: var(--orange); color: white; transform: rotate(90deg); }
+    [data-theme="dark"] .modal-close { background: var(--dark); color: var(--gray); }
+    [data-theme="dark"] .modal-close:hover { background: var(--orange); color: white; }
+    
+    .modal-header-text { text-align: center; margin-bottom: 1.5rem; padding: 0 20px; }
+    .modal-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.3rem; font-weight: 700; color: var(--black); margin-bottom: 0.2rem; }
+    .modal-subtitle { font-size: 0.85rem; color: var(--orange); font-weight: 600; line-height: 1.3; }
+    
+    .form-row { display: flex; gap: 0.8rem; margin-bottom: 0.8rem; }
+    .form-row .form-group { flex: 1; margin-bottom: 0; }
+    
+    .form-group { margin-bottom: 0.8rem; position: relative; }
+    .form-group label { display: block; font-size: 0.7rem; font-weight: 600; margin-bottom: 0.3rem; color: var(--gray); text-transform: uppercase; letter-spacing: 0.05em; }
+    .form-group input, .form-group select {
+      width: 100%; padding: 0.75rem 1rem; border: 1.5px solid var(--border);
+      border-radius: 12px; background: var(--light-gray); color: var(--black);
+      font-family: inherit; font-size: 0.95rem; transition: all 0.3s ease;
+    }
+    [data-theme="dark"] .form-group input, [data-theme="dark"] .form-group select { background: var(--dark); border-color: transparent; color: var(--white); }
+    .form-group input:hover, .form-group select:hover { border-color: #cbd5e1; }
+    [data-theme="dark"] .form-group input:hover, [data-theme="dark"] .form-group select:hover { border-color: #4b5563; }
+    .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--orange); box-shadow: 0 0 0 4px rgba(249,115,22,0.15); background: var(--white); }
+    [data-theme="dark"] .form-group input:focus, [data-theme="dark"] .form-group select:focus { background: #000; }
+    
+    /* Errors */
+    .error-border { border-color: #ef4444 !important; box-shadow: 0 0 0 2px rgba(239,68,68,0.1) !important; }
+    .error-text { color: #ef4444; font-size: 0.7rem; font-weight: 600; margin-top: 4px; display: none; }
+    .qty-error { color: #ef4444; font-size: 0.7rem; margin-top: 0.3rem; font-weight: 500; display: none; }
+    
+    .price-box {
+      background: rgba(249,115,22,0.05); border: 1px solid rgba(249,115,22,0.15);
+      border-radius: 12px; padding: 0.8rem 1rem; margin: 1rem 0;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .price-col { display: flex; flex-direction: column; }
+    .price-col span:first-child { font-size: 0.7rem; color: var(--gray); text-transform: uppercase; font-weight: 600; margin-bottom: 2px; }
+    .price-col span:last-child { font-size: 0.95rem; font-weight: 700; color: var(--black); }
+    .price-col.total span:last-child { font-size: 1.25rem; font-weight: 800; color: var(--orange); }
+    [data-theme="dark"] .price-col span:last-child { color: var(--white); }
+    [data-theme="dark"] .price-col.total span:last-child { color: var(--orange); }
+
+    .btn-submit {
+      width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 1rem; background: var(--black); color: var(--white); border: none; border-radius: 12px;
+      font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      margin-top: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.1); font-family: inherit;
+    }
+    [data-theme="dark"] .btn-submit { background: var(--orange); color: white; }
+    .btn-submit:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(249,115,22,0.3); background: var(--orange); color: white; }
+    .btn-submit:active:not(:disabled) { transform: translateY(0); box-shadow: 0 4px 10px rgba(249,115,22,0.2); }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; background: var(--gray); transform: none; box-shadow: none; color: white; }
+    .btn-submit svg { width: 18px; height: 18px; fill: currentColor; }
+
+    /* CART UI */
+    .cart-items-container { margin-bottom: 1rem; max-height: 250px; overflow-y: auto; padding-right: 5px; }
+    .cart-items-container::-webkit-scrollbar { width: 4px; }
+    .cart-items-container::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+    .cart-item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px;
+      background: var(--light-gray);
+    }
+    [data-theme="dark"] .cart-item { background: var(--dark); border-color: transparent; }
+    .cart-item-info { display: flex; flex-direction: column; gap: 2px; }
+    .cart-item-title { font-weight: 600; color: var(--black); font-size: 0.9rem; }
+    .cart-item-desc { font-size: 0.75rem; color: var(--gray); }
+    .cart-item-price { font-weight: 700; color: var(--orange); font-size: 0.9rem; margin-top: 4px; }
+    .btn-delete { background: none; border: none; color: #ef4444; cursor: pointer; padding: 5px; display: flex; align-items: center; justify-content: center; border-radius: 8px; transition: background 0.2s; }
+    .btn-delete:hover { background: rgba(239,68,68,0.1); }
+    .btn-delete svg { width: 18px; height: 18px; fill: currentColor; }
+    .empty-cart-msg { text-align: center; color: var(--gray); font-size: 0.9rem; padding: 2rem 0; }
+
+    @media (max-width: 768px) {
+      nav { padding: 0 1.25rem; }
+      .nav-links, .nav-cta { display: none; }
+      .nav-controls { gap: 10px; }
+      .theme-toggle { margin-right: 0; }
+      .hamburger { display: flex; }
+      .hero-content { margin-left: 0; padding: 6rem 1.25rem 4rem; }
+      #products, #about { padding: 4rem 1.25rem; }
+      footer { padding: 3rem 1.25rem 2rem; }
+      .modal-overlay { padding: 0.8rem; }
+      .modal-content { padding: 1.5rem 1.2rem; border-radius: 20px; }
+      .modal-close { top: 0.8rem; right: 0.8rem; width: 34px; height: 34px; }
+    }
+    @media (max-width: 480px) {
+      .form-row { flex-direction: column; gap: 0.8rem; }
+      .price-box { flex-direction: column; align-items: flex-start; gap: 0.6rem; padding: 1rem; }
+      .price-col { width: 100%; flex-direction: row; justify-content: space-between; align-items: center; }
+      .price-col span:first-child { margin-bottom: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<nav id="navbar">
+  <a class="nav-logo" href="#hero">
+    <div class="nav-logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+    </div>
+    <span class="nav-logo-text"><span class="orange">Ecom</span>Emballage</span>
+  </a>
+  <div class="nav-links">
+    <a href="#hero">Accueil</a>
+    <a href="#products">Produits</a>
+    <a href="#about">À propos</a>
+  </div>
+  <div class="nav-controls">
+    <button id="themeToggle" class="theme-toggle" aria-label="Changer de thème">🌙</button>
+    <a class="nav-cta" href="https://wa.me/212777407156" target="_blank" rel="noopener noreferrer">
+      <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Contact
+    </a>
+    <button class="hamburger" id="hamburger" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#hero" onclick="closeMenu()">Accueil</a>
+  <a href="#products" onclick="closeMenu()">Produits</a>
+  <a href="#about" onclick="closeMenu()">À propos</a>
+  <a class="mobile-cta" href="https://wa.me/212777407156" target="_blank" rel="noopener noreferrer" onclick="closeMenu()">Commander sur WhatsApp</a>
+</div>
+
+<section id="hero">
+  <div class="hero-bg"><div class="hero-shape"></div><div class="hero-shape"></div><div class="hero-shape"></div></div>
+  <div class="hero-content">
+    <div class="hero-badge"><div class="hero-badge-dot"></div>Emballage E-commerce au Maroc</div>
+    <h1 class="hero-title">Emballez vos<br/><span class="accent">produits</span> avec<br/>excellence</h1>
+    <p class="hero-desc">Tout ce dont vous avez besoin pour emballer et expédier vos commandes e-commerce. Qualité professionnelle, prix compétitifs.</p>
+    <div class="hero-buttons">
+      <a class="btn-primary" href="#products">Découvrir le catalogue</a>
+      <a class="btn-secondary" href="#about">En savoir plus</a>
+    </div>
+  </div>
+  <div class="hero-scroll" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">
+    <span>Découvrir</span><div class="scroll-arrow"></div>
+  </div>
+</section>
+
+<section id="products">
+  <div class="section-header">
+    <span class="section-label">Catalogue</span>
+    <h2 class="section-title">Nos Produits</h2>
+    <p class="section-desc">Tout pour emballer, protéger et expédier vos commandes e-commerce</p>
+  </div>
+  <div class="products-grid">
+    <div class="product-card">
+      <div class="product-img" data-images="boitepadrille1.png,boitespadrille2.png"><img src="boitepadrille1.png" alt="Boîte spadrille"/></div>
+      <div class="product-info">
+        <div class="product-name">Boîte spadrille</div>
+        <div class="product-desc">Apportez une touche premium à vos produits.</div>
+        <div class="product-price">5.50 DH</div>
+        <button class="product-btn" onclick="openProductModal('Boîte spadrille')">Choisir les options</button>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="product-img" data-images="valiseblanc.png,valiseraft.png,repo/valiserose.png"><img src="repo/valiseraft.png" alt="Carton valise"/></div>
+      <div class="product-info">
+        <div class="product-name">Carton valise</div>
+        <div class="product-desc">Idéal pour les envois stylés et sécurisés.</div>
+        <div class="product-price">Dès 1.50 DH</div>
+        <button class="product-btn" onclick="openProductModal('Carton valise')">Choisir les options</button>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="product-img" data-images="caisse1.png,caisse2.png"><img src="caisse1.png" alt="Carton caisse"/></div>
+      <div class="product-info">
+        <div class="product-name">Carton caisse</div>
+        <div class="product-desc">Carton d'expédition robuste pour tout produit.</div>
+        <div class="product-price">Dès 1.00 DH</div>
+        <button class="product-btn" onclick="openProductModal('Carton caisse')">Choisir les options</button>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="product-img" data-images="sachet1.png,sachet2.png,sachet3.png,sachet4.png,sachet5.png"><img src="sachet1.png" alt="Sachet ecom"/></div>
+      <div class="product-info">
+        <div class="product-name">Sachet ecom</div>
+        <div class="product-desc">Pochettes d'expédition légères, indéchirables.</div>
+        <div class="product-price">Par Packs</div>
+        <button class="product-btn" onclick="openProductModal('Sachet ecom')">Choisir les options</button>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="product-img" data-images="sachetbulle1.png,sachetbulle2.png"><img src="sachetbulle1.png" alt="Sachet zip"/></div>
+      <div class="product-info">
+        <div class="product-name">Sachet zip</div>
+        <div class="product-desc">Sachets à fermeture zip (accessoires, textiles).</div>
+        <div class="product-price">Par Packs</div>
+        <button class="product-btn" onclick="openProductModal('Sachet zip')">Choisir les options</button>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="product-img" data-images="bullenoir1.png,bullenoir2.png,bullerose.png"><img src="bullenoir1.png" alt="Sachet bulle"/></div>
+      <div class="product-info">
+        <div class="product-name">Sachet bulle</div>
+        <div class="product-desc">Sachets matelassés pour envois fragiles.</div>
+        <div class="product-price">Par Packs</div>
+        <button class="product-btn" onclick="openProductModal('Sachet bulle')">Choisir les options</button>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="product-img" data-images="sachetpapier.png"><img src="sachetpapier.png" alt="Sachet papier"/></div>
+      <div class="product-info">
+        <div class="product-name">Sachet papier</div>
+        <div class="product-desc">Option écologique et élégante.</div>
+        <div class="product-price">Selon la taille</div>
+        <button class="product-btn" onclick="openProductModal('Sachet papier')">Choisir les options</button>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="product-img" data-images="bullenoir2.png,bullenoir2.png"><img src="bullenoir1.png" alt="Papier bulle"/></div>
+      <div class="product-info">
+        <div class="product-name">Papier bulle</div>
+        <div class="product-desc">Rouleaux pour un calage optimal.</div>
+        <div class="product-price">Dès 70.00 DH</div>
+        <button class="product-btn" onclick="openProductModal('Papier bulle')">Choisir les options</button>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="product-img" data-images="scotchty.png"><img src="scotchty.png" alt="Scotch"/></div>
+      <div class="product-info">
+        <div class="product-name">Scotch</div>
+        <div class="product-desc">Rubans adhésifs résistants et personnalisés.</div>
+        <div class="product-price">Dès 10.00 DH</div>
+        <button class="product-btn" onclick="openProductModal('Scotch')">Choisir les options</button>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="product-img" data-images="craft fenetre.jpg"><img src="craft fenetre.jpg" alt="Sachet craft avec fenetre"/></div>
+      <div class="product-info">
+        <div class="product-name">Sachet craft avec fenêtre</div>
+        <div class="product-desc">Pour mettre en valeur vos produits artisanaux.</div>
+        <div class="product-price">Selon la taille</div>
+        <button class="product-btn" onclick="openProductModal('Sachet craft avec fenêtre')">Choisir les options</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="section-header">
+    <span class="section-label">Pourquoi nous choisir</span>
+    <h2 class="section-title">Votre partenaire emballage</h2>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 3v5h-7V8zM1 18h18M5 21a2 2 0 100-4 2 2 0 000 4zM19 21a2 2 0 100-4 2 2 0 000 4z"/></svg></div>
+      <div class="feature-title">Livraison rapide</div>
+      <div class="feature-desc">Expédition partout au Maroc en 24-48h.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      <div class="feature-title">Qualité garantie</div>
+      <div class="feature-desc">Matériaux robustes pour protéger vos envois.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+      <div class="feature-title">Prix compétitifs</div>
+      <div class="feature-desc">Meilleurs prix du marché et remises de gros.</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo">
+        <div class="footer-logo-icon"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></div>
+        <span class="footer-brand-name">EcomEmballage</span>
+      </div>
+      <p class="footer-tagline">Votre fournisseur d'emballage e-commerce au Maroc.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <div class="footer-links">
+        <a href="tel:+212777407156"><svg class="svg-stroke" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.9 10.81a19.79 19.79 0 01-3.07-8.67A2 2 0 012.81 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L7.09 7.91a16 16 0 006 6l.91-.91a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg> +212 777 407 156</a>
+        <a href="https://wa.me/212777407156" target="_blank" rel="noopener noreferrer"><svg class="svg-fill" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> WhatsApp</a>
+        <a href="https://www.instagram.com/ecom_emballage/" target="_blank" rel="noopener noreferrer"><svg class="svg-stroke" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg> @ecom_emballage</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© <span id="year"></span> EcomEmballage. Tous droits réservés.</p>
+  </div>
+</footer>
+
+<a class="wa-float" href="https://wa.me/212777407156" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+<div class="cart-float" onclick="openCartModal()" aria-label="Panier">
+  🛒 <div class="cart-count" id="cart-count">0</div>
+</div>
+
+<div class="modal-overlay" id="productModal" onclick="closeProductModal(event)">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeProductModal()">&times;</button>
+    <div class="modal-header-text">
+      <h2 class="modal-title">Ajouter au panier</h2>
+      <p class="modal-subtitle" id="modalProductName">Produit</p>
+    </div>
+    
+    <form id="productForm" onsubmit="addToCart(event)">
+      <div class="form-row">
+        <div class="form-group" id="group-color" style="display: none;">
+          <label for="modal-color">Couleur</label>
+          <select id="modal-color" onchange="updateSizesAndPrice()" required></select>
+        </div>
+        <div class="form-group" id="group-size" style="display: none;">
+          <label for="modal-dim">Size / Dimensions</label>
+          <select id="modal-dim" onchange="calculatePrice()" required></select>
+        </div>
+      </div>
+      
+      <div class="form-group qty-wrapper">
+        <label for="modal-qty-container">Quantité / Pack <span id="min-qty-label" style="display:none;color:var(--orange);"></span></label>
+        <input type="number" id="modal-qty" oninput="calculatePrice()" required>
+        <select id="modal-qty-select" onchange="calculatePrice()" style="display:none;"></select>
+        <div class="qty-error" id="qtyError">Minimum requis</div>
+      </div>
+      
+      <div class="price-box">
+        <div class="price-col">
+          <span>Prix unitaire</span>
+          <span id="modal-unit-price">0.00 DH</span>
+        </div>
+        <div class="price-col total">
+          <span>Total :</span>
+          <span id="modal-total-price">0.00 DH</span>
+        </div>
+      </div>
+      
+      <button type="submit" class="btn-submit" id="addCartBtn">
+        <svg viewBox="0 0 24 24"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.29 5.16c-.16.36.1.75.49.75h14.3M10 21a1 1 0 100-2 1 1 0 000 2zm7 0a1 1 0 100-2 1 1 0 000 2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> 
+        Ajouter au panier
+      </button>
+    </form>
+  </div>
+</div>
+
+<div class="modal-overlay" id="cartModal" onclick="closeCartModal(event)">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeCartModal()">&times;</button>
+    <div class="modal-header-text">
+      <h2 class="modal-title">Votre Panier</h2>
+    </div>
+    
+    <div id="cart-items-container" class="cart-items-container">
+      </div>
+    
+    <div class="price-box" style="margin-top:0;">
+      <div class="price-col total" style="width:100%; flex-direction:row; justify-content:space-between; align-items:center;">
+        <span>TOTAL GLOBAL</span>
+        <span id="cart-grand-total">0.00 DH</span>
+      </div>
+    </div>
+
+    <form id="checkoutForm" onsubmit="submitCheckout(event)">
+      <div class="form-group">
+        <label for="checkout-name">Nom complet *</label>
+        <input type="text" id="checkout-name" placeholder="Votre nom" oninput="removeError(this)">
+        <div class="error-text" id="err-name">Champ obligatoire</div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="checkout-city">Ville *</label>
+          <input type="text" id="checkout-city" placeholder="Votre ville" oninput="removeError(this)">
+          <div class="error-text" id="err-city">Champ obligatoire</div>
+        </div>
+        <div class="form-group">
+          <label for="checkout-phone">Téléphone *</label>
+          <input type="tel" id="checkout-phone" placeholder="06XXXXXXXX" oninput="removeError(this)">
+          <div class="error-text" id="err-phone">Champ obligatoire</div>
+        </div>
+      </div>
+      
+      <button type="submit" class="btn-submit" id="checkoutBtn">
+        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> 
+        Commander maintenant
+      </button>
+    </form>
+  </div>
+</div>
+
+<script>
+  // ============================
+  // GLOBAL & THEME
+  // ============================
+  document.getElementById('year').textContent = new Date().getFullYear();
+  window.addEventListener('scroll', () => { document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20); });
+  const observer = new IntersectionObserver((entries) => { entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }); }, { threshold: 0.1 });
+  document.querySelectorAll('.product-card, .feature-card').forEach(el => observer.observe(el));
+  function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('open'); }
+  function closeMenu() { document.getElementById('mobileMenu').classList.remove('open'); }
+
+  const themeToggleBtn = document.getElementById('themeToggle');
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  themeToggleBtn.innerHTML = savedTheme === 'dark' ? '☀️' : '🌙';
+  themeToggleBtn.addEventListener('click', () => {
+    let target = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', target);
+    localStorage.setItem('theme', target);
+    themeToggleBtn.innerHTML = target === 'dark' ? '☀️' : '🌙';
+  });
+
+  // Slider d'images automatique
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.product-img').forEach(container => {
+      const imagesStr = container.dataset.images;
+      if (imagesStr) {
+        const images = imagesStr.split(',').map(s => s.trim());
+        if (images.length > 1) {
+          let imgEl = container.querySelector('img');
+          let idx = 0;
+          setInterval(() => {
+            imgEl.style.opacity = 0;
+            setTimeout(() => { idx = (idx + 1) % images.length; imgEl.src = images[idx]; imgEl.style.opacity = 1; }, 300);
+          }, 2500); 
+        }
+      }
+    });
+    
+    // Charger données client (localStorage)
+    if(localStorage.getItem('ecom_name')) document.getElementById('checkout-name').value = localStorage.getItem('ecom_name');
+    if(localStorage.getItem('ecom_city')) document.getElementById('checkout-city').value = localStorage.getItem('ecom_city');
+    if(localStorage.getItem('ecom_phone')) document.getElementById('checkout-phone').value = localStorage.getItem('ecom_phone');
+  });
+
+  // ============================
+  // DATABASE PRODUITS
+  // ============================
+  const sachetPapierVariants = (() => {
+    let vars = [];
+    ["Marron", "Noir", "Blanc", "Bleu", "Jaune", "Gris", "Orange"].forEach(c => {
+      ["15x20", "20x25", "25x30", "30x40"].forEach(s => { vars.push({ size: s, color: c, price: 2.00 }); });
+    });
+    return vars;
+  })();
+
+  const productsDB = {
+    "Boîte spadrille": {
+      min: 50, hasSize: false, hasColor: true,
+      variants: [{color:"Orange", price:5.5}, {color:"Noir", price:5.5}, {color:"Gris simple", price:5.5}, {color:"Gris orange", price:5.5}]
+    },
+    "Carton valise": {
+      min: 50, hasSize: true, hasColor: true,
+      variants: [
+        { size: "11/11/6", color: "Craft", price: 1.5 }, { size: "15/15/7", color: "Craft", price: 2.0 },
+        { size: "15/15/7", color: "Blanc", price: 3.0 }, { size: "15/15/7", color: "Noir", price: 3.0 }, { size: "15/15/7", color: "Rose", price: 3.0 },
+        { size: "20/15/6.5", color: "Craft", price: 2.5 }, { size: "20/20/7", color: "Craft", price: 2.5 },
+        { size: "20/20/7", color: "Blanc", price: 3.0 }, { size: "20/20/7", color: "Noir", price: 3.0 }, { size: "20/20/7", color: "Rose", price: 3.0 },
+        { size: "30/25/8", color: "Craft", price: 4.5 }, { size: "30/25/8", color: "Blanc", price: 5.0 }, { size: "30/25/8", color: "Rose", price: 5.5 },
+        { size: "35/30/10", color: "Craft", price: 7.5 }
+      ]
+    },
+    "Carton caisse": {
+      min: 100, hasSize: true, hasColor: false,
+      variants: [
+        { size: "15/10/10", price: 1.0 }, { size: "18/10/14 (Blanc)", price: 1.5 }, { size: "22/12/14", price: 2.0 }, { size: "22/20/16", price: 3.0 },
+        { size: "23/13/10", price: 2.0 }, { size: "25/15/15", price: 2.5 }, { size: "25/17/17", price: 2.5 }, { size: "25/18/17", price: 2.75 },
+        { size: "26/21/13", price: 3.0 }, { size: "30/14/20", price: 3.0 }, { size: "25/18/20", price: 3.0 }, { size: "28/13/13", price: 2.5 },
+        { size: "30/20/20 simple", price: 3.5 }, { size: "40/20/20", price: 5.5 }
+      ]
+    },
+    "Sachet ecom": {
+      qtyOptions: [100, 200, 300, 400], hasSize: true, hasColor: true,
+      variants: [
+        { size: "15x23", color: "Gris simple", price: 1.0 }, { size: "23x30", color: "Gris simple", price: 1.5 }, { size: "28x33", color: "Gris simple", price: 2.0 },
+        { size: "30x40", color: "Gris simple", price: 2.5 }, { size: "31x42", color: "Gris simple", price: 3.0 }, { size: "37x48", color: "Gris simple", price: 3.5 }, { size: "40x52", color: "Gris simple", price: 4.0 },
+        { size: "26x30", color: "Noir", price: 2.0 }, { size: "32x41", color: "Noir", price: 3.0 }, { size: "37x48", color: "Noir", price: 3.5 },
+        { size: "26x30", color: "Rose", price: 2.0 }, { size: "32x41", color: "Rose", price: 3.0 }, { size: "37x48", color: "Rose", price: 3.5 }
+      ]
+    },
+    "Sachet zip": {
+      qtyOptions: [100, 200, 300, 400], hasSize: true, hasColor: true,
+      variants: [
+        {size: "10x15", color: "Transparent", price: 1.0}, {size: "15x20", color: "Transparent", price: 1.5}, {size: "20x25", color: "Transparent", price: 2.0}, {size: "30x40", color: "Transparent", price: 3.0},
+        {size: "10x15", color: "Rose", price: 1.2}, {size: "15x20", color: "Rose", price: 1.7}, {size: "20x25", color: "Rose", price: 2.2}, {size: "30x40", color: "Rose", price: 3.2},
+        {size: "10x15", color: "Noir", price: 1.2}, {size: "15x20", color: "Noir", price: 1.7}, {size: "20x25", color: "Noir", price: 2.2}, {size: "30x40", color: "Noir", price: 3.2}
+      ]
+    },
+    "Sachet bulle": {
+      qtyOptions: [50, 100, 200, 300], hasSize: true, hasColor: true,
+      variants: [
+        {size: "15x20", color: "Blanc", price: 2.0}, {size: "20x25", color: "Blanc", price: 3.0}, {size: "25x30", color: "Blanc", price: 4.0},
+        {size: "15x20", color: "Noir", price: 2.5}, {size: "20x25", color: "Noir", price: 3.5}, {size: "25x30", color: "Noir", price: 4.5},
+        {size: "15x20", color: "Rose", price: 2.5}, {size: "20x25", color: "Rose", price: 3.5}, {size: "25x30", color: "Rose", price: 4.5}
+      ]
+    },
+    "Sachet papier": { min: 50, hasSize: true, hasColor: true, variants: sachetPapierVariants },
+    "Papier bulle": { min: 1, hasSize: true, hasColor: false, variants: [ { size: "120cm/100m", price: 300 }, { size: "50cm/60m", price: 150 }, { size: "30cm/50m", price: 70 } ] },
+    "Scotch": {
+      min: 6, step: 6, hasSize: true, hasColor: false,
+      variants: [ { size: "Petit transparent", price: 10 }, { size: "Grand transparent", price: 15 }, { size: "Thank you", price: 15 }, { size: "Fragile", price: 15 } ]
+    },
+    "Sachet craft avec fenêtre": { min: 50, hasSize: true, hasColor: false, variants: [ { size: "S (10x15)", price: 1.5 }, { size: "M (15x22)", price: 2.0 }, { size: "L (20x30)", price: 2.5 } ] }
+  };
+
+  // ============================
+  // LOGIQUE PANIER ET MODALS
+  // ============================
+  let cart = [];
+  let currentProductName = "";
+  let currentProductData = null;
+
+  function openProductModal(productName) {
+    currentProductName = productName;
+    currentProductData = productsDB[productName];
+    document.getElementById('modalProductName').innerText = productName;
+    
+    // Gérer l'affichage Couleurs en premier (pour contraindre les tailles si besoin)
+    const groupColor = document.getElementById('group-color');
+    const selectColor = document.getElementById('modal-color');
+    if (currentProductData.hasColor) {
+      groupColor.style.display = 'block'; selectColor.required = true;
+      const uniqueColors = [...new Set(currentProductData.variants.map(v => v.color))];
+      selectColor.innerHTML = uniqueColors.map(c => `<option value="${c}">${c}</option>`).join('');
+    } else {
+      groupColor.style.display = 'none'; selectColor.required = false; selectColor.innerHTML = '';
+    }
+
+    // Input Quantité vs Packs
+    const qtyNum = document.getElementById('modal-qty');
+    const qtySel = document.getElementById('modal-qty-select');
+    const minLabel = document.getElementById('min-qty-label');
+    
+    if (currentProductData.qtyOptions) {
+      qtyNum.style.display = 'none'; qtyNum.required = false;
+      qtySel.style.display = 'block'; qtySel.required = true;
+      qtySel.innerHTML = currentProductData.qtyOptions.map(o => `<option value="${o}">Pack de ${o} pcs</option>`).join('');
+      minLabel.style.display = 'none';
+    } else {
+      qtyNum.style.display = 'block'; qtyNum.required = true;
+      qtySel.style.display = 'none'; qtySel.required = false;
+      let min = currentProductData.min || 1;
+      let step = currentProductData.step || 1;
+      qtyNum.min = min; qtyNum.step = step; qtyNum.value = min;
+      minLabel.style.display = 'inline'; minLabel.innerText = `(Min. ${min})`;
+    }
+
+    updateSizesAndPrice(); // Remplira les tailles selon la couleur
+    document.getElementById('productModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function updateSizesAndPrice() {
+    if (!currentProductData) return;
+    const groupSize = document.getElementById('group-size');
+    const selectSize = document.getElementById('modal-dim');
+    const selectedColor = currentProductData.hasColor ? document.getElementById('modal-color').value : null;
+
+    if (currentProductData.hasSize) {
+      groupSize.style.display = 'block'; selectSize.required = true;
+      let availableVariants = currentProductData.variants;
+      if (selectedColor) availableVariants = availableVariants.filter(v => v.color === selectedColor);
+      
+      const uniqueSizes = [...new Set(availableVariants.map(v => v.size))];
+      let currentVal = selectSize.value;
+      selectSize.innerHTML = uniqueSizes.map(s => `<option value="${s}">${s}</option>`).join('');
+      if(uniqueSizes.includes(currentVal)) selectSize.value = currentVal;
+    } else {
+      groupSize.style.display = 'none'; selectSize.required = false; selectSize.innerHTML = '';
+    }
+    calculatePrice();
+  }
+
+  function calculatePrice() {
+    if (!currentProductData) return;
+    const submitBtn = document.getElementById('addCartBtn');
+    const qtyError = document.getElementById('qtyError');
+    let qty = 0;
+    
+    if (currentProductData.qtyOptions) qty = parseInt(document.getElementById('modal-qty-select').value);
+    else qty = parseInt(document.getElementById('modal-qty').value) || 0;
+
+    let unitPrice = 0;
+    let selectedSize = currentProductData.hasSize ? document.getElementById('modal-dim').value : undefined;
+    let selectedColor = currentProductData.hasColor ? document.getElementById('modal-color').value : undefined;
+    
+    let variant = currentProductData.variants.find(v => 
+      (currentProductData.hasSize ? v.size === selectedSize : true) &&
+      (currentProductData.hasColor ? v.color === selectedColor : true)
+    );
+    if (variant) unitPrice = variant.price;
+
+    let min = currentProductData.min || 1;
+    let total = unitPrice * qty;
+
+    document.getElementById('modal-unit-price').innerText = `${unitPrice.toFixed(2)} DH`;
+    document.getElementById('modal-total-price').innerText = `${total.toFixed(2)} DH`;
+
+    if (!currentProductData.qtyOptions && qty < min) {
+      qtyError.innerText = `Minimum ${min} requis`; qtyError.style.display = 'block';
+      document.getElementById('modal-qty').style.borderColor = '#ef4444'; submitBtn.disabled = true;
+    } else {
+      qtyError.style.display = 'none';
+      if(!currentProductData.qtyOptions) document.getElementById('modal-qty').style.borderColor = 'var(--border)';
+      submitBtn.disabled = false;
+    }
+  }
+
+  function addToCart(e) {
+    e.preventDefault();
+    let qty = currentProductData.qtyOptions ? parseInt(document.getElementById('modal-qty-select').value) : parseInt(document.getElementById('modal-qty').value);
+    let size = currentProductData.hasSize ? document.getElementById('modal-dim').value : null;
+    let color = currentProductData.hasColor ? document.getElementById('modal-color').value : null;
+    
+    let variant = currentProductData.variants.find(v => 
+      (currentProductData.hasSize ? v.size === size : true) && (currentProductData.hasColor ? v.color === color : true)
+    );
+    let price = variant ? variant.price : 0;
+
+    cart.push({ id: Date.now(), name: currentProductName, size, color, qty, price, total: price * qty, isPack: !!currentProductData.qtyOptions });
+    
+    updateCartUI();
+    closeProductModal();
+  }
+
+  function updateCartUI() {
+    document.getElementById('cart-count').innerText = cart.length;
+    const container = document.getElementById('cart-items-container');
+    let grandTotal = 0;
+    
+    if (cart.length === 0) {
+      container.innerHTML = `<div class="empty-cart-msg">Votre panier est vide</div>`;
+      document.getElementById('checkoutBtn').disabled = true;
+    } else {
+      document.getElementById('checkoutBtn').disabled = false;
+      container.innerHTML = cart.map(item => {
+        grandTotal += item.total;
+        let details = [];
+        if(item.size) details.push(`Taille: ${item.size}`);
+        if(item.color) details.push(`Couleur: ${item.color}`);
+        let qtyText = item.isPack ? `Pack de ${item.qty} pcs` : `Qté: ${item.qty}`;
+        return `
+          <div class="cart-item">
+            <div class="cart-item-info">
+              <div class="cart-item-title">${item.name}</div>
+              <div class="cart-item-desc">${details.join(' | ')}</div>
+              <div class="cart-item-desc">${qtyText}</div>
+              <div class="cart-item-price">${item.total.toFixed(2)} DH</div>
+            </div>
+            <button class="btn-delete" onclick="removeFromCart(${item.id})" aria-label="Supprimer">
+              <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+    document.getElementById('cart-grand-total').innerText = `${grandTotal.toFixed(2)} DH`;
+  }
+
+  function removeFromCart(id) { cart = cart.filter(item => item.id !== id); updateCartUI(); }
+
+  function openCartModal() {
+    updateCartUI();
+    document.getElementById('cartModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeProductModal(e) {
+    if (!e || e.target.id === 'productModal' || e.target.className === 'modal-close') {
+      document.getElementById('productModal').classList.remove('active');
+      document.body.style.overflow = 'auto';
+      setTimeout(() => document.getElementById('productForm').reset(), 300);
+    }
+  }
+
+  function closeCartModal(e) {
+    if (!e || e.target.id === 'cartModal' || e.target.className === 'modal-close') {
+      document.getElementById('cartModal').classList.remove('active');
+      document.body.style.overflow = 'auto';
+    }
+  }
+
+  function removeError(el) {
+    el.classList.remove('error-border');
+    document.getElementById('err-' + el.id.split('-')[1]).style.display = 'none';
+  }
+
+  function submitCheckout(e) {
+    e.preventDefault();
+    if(cart.length === 0) return;
+
+    let isValid = true;
+    ['name', 'city', 'phone'].forEach(field => {
+      let el = document.getElementById('checkout-' + field);
+      if(!el.value.trim()) {
+        el.classList.add('error-border');
+        document.getElementById('err-' + field).style.display = 'block';
+        isValid = false;
+      }
+    });
+
+    if(!isValid) return;
+
+    // Enregistrement localStorage
+    const nom = document.getElementById('checkout-name').value.trim();
+    const ville = document.getElementById('checkout-city').value.trim();
+    const tel = document.getElementById('checkout-phone').value.trim();
+    localStorage.setItem('ecom_name', nom);
+    localStorage.setItem('ecom_city', ville);
+    localStorage.setItem('ecom_phone', tel);
+
+    // Construction du message WhatsApp
+    let msg = `Bonjour, je souhaite valider ma commande :\n\n`;
+    cart.forEach(item => {
+      msg += `📦 *Produit*: ${item.name}\n`;
+      if(item.size) msg += `   Size: ${item.size}\n`;
+      if(item.color) msg += `   Couleur: ${item.color}\n`;
+      msg += `   Quantité: ${item.isPack ? item.qty + ' pcs (Pack)' : item.qty}\n\n`;
+    });
+    msg += `💳 *Total* : ${document.getElementById('cart-grand-total').innerText}\n\n`;
+    msg += `👤 *Client* :\nNom: ${nom}\nVille: ${ville}\nTel: ${tel}`;
+
+    alert("Commande prête ! Redirection vers WhatsApp pour validation.");
+    window.open(`https://wa.me/212777407156?text=${encodeURIComponent(msg)}`, '_blank');
+    
+    // Reset après commande
+    cart = [];
+    updateCartUI();
+    closeCartModal();
+  }
+</script>
+</body>
+</html>
