@@ -643,9 +643,8 @@
 </div>
 
 <script>
-  // ============================
   // GLOBAL & THEME
-  // ============================
+  
   document.getElementById('year').textContent = new Date().getFullYear();
   window.addEventListener('scroll', () => { document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20); });
   const observer = new IntersectionObserver((entries) => { entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }); }, { threshold: 0.1 });
@@ -687,9 +686,8 @@
     if(localStorage.getItem('ecom_phone')) document.getElementById('checkout-phone').value = localStorage.getItem('ecom_phone');
   });
 
-  // ============================
   // DATABASE PRODUITS
-  // ============================
+
   const sachetPapierVariants = (() => {
     let vars = [];
     ["Marron", "Noir", "Blanc", "Bleu", "Jaune", "Gris", "Orange"].forEach(c => {
@@ -757,9 +755,8 @@
     "Sachet craft avec fenêtre": { min: 50, hasSize: true, hasColor: false, variants: [ { size: "S (10x15)", price: 1.5 }, { size: "M (15x22)", price: 2.0 }, { size: "L (20x30)", price: 2.5 } ] }
   };
 
-  // ============================
   // LOGIQUE PANIER ET MODALS
-  // ============================
+  
   let cart = [];
   let currentProductName = "";
   let currentProductData = null;
